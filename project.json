@@ -1,0 +1,8 @@
+{
+  "name": "endpoint-shutdown",
+  "description": "Delete AWS ML realtime endpoint in response to SNS trigger",
+  "memory": 128,
+  "runtime": "python",
+  "environment": {"MLModelId": "ml-oKHtcVCiEit"},
+  "role": "arn:aws:iam::754135023419:role/osha_lambda_worker201611151542299994194007uz"
+}
