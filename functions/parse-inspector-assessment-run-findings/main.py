@@ -3,10 +3,10 @@
 from __future__ import print_function
 import json
 import boto3
-import botocore.exceptions
+#import botocore.exceptions
 import logging
-import dateutil.parser
-import os
+from datetime import datetime
+#import os
 
 # set up logging
 logger = logging.getLogger()
@@ -19,9 +19,18 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
+
 def lambda_handler(event, context):
     """ Main Lambda event handling loop"""
-    logger.info('Received event: ' + json.dumps(event, indent=2))
+    logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
     assessment_run_arn = event['assessment_run_arn']
 
@@ -38,15 +47,17 @@ def lambda_handler(event, context):
         }
     )
 
-    logger.info('Received response: ' + json.dumps(response, indent=2))
+    logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
 
-    if response.length >0:
-        return 'Fail'
+    if len(response) > 0:
+        return {'scan_result': [{'scan_status': 'fail'}], 'failed_finding_arns': response['findingArns']}
     else:
-        return 'Pass'
+        return {'scan_result': [{'scan_status': 'pass'}]}
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'spot_request_id': 'sir-08b93456'},
+    results = lambda_handler(event={
+        'assessment_run_arn':
+            'arn:aws:inspector:us-west-2:754135023419:target/0-uzVNByJq/template/0-rrk7k11d/run/0-3xKsC0qg'},
                              context="")
     print(results)

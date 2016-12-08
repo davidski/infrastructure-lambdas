@@ -3,10 +3,11 @@
 from __future__ import print_function
 import json
 import boto3
-import botocore.exceptions
+#import botocore.exceptions
 import logging
-import dateutil.parser
-import os
+from datetime import datetime
+#import dateutil.parser
+#import os
 
 # set up logging
 logger = logging.getLogger()
@@ -19,24 +20,42 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
+
 def lambda_handler(event, context):
     """ Main Lambda event handling loop"""
-    logger.info('Received event: ' + json.dumps(event, indent=2))
+    logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
     resource_id = event['resource_id']
-    tag = event['tag']
+    tags = event['tags']
 
     session = boto3.Session(profile_name='administrator-service')
-    ec2 = session.resource('ec2')
-    response = ec2.Tag('resource_id', tag['key'], tag['value'])
+    ec2 = session.client('ec2')
+    for key in tags:
+        ec2.create_tags(
+            Resources=[resource_id],
+            Tags=[{
+                'Key': key,
+                'Value': tags[key]
+            }]
+        )
+        logger.info("Tagged resource {} with tag {}:{}".format(resource_id, key, tags[key]))
 
-    logger.info('Received response: ' + json.dumps(response, indent=2))
-
-    return response
+    return None
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'resource_id': 'ami-08b93456',
-                                    'tag': {'key': 'scan_status', 'value': 'Pass'}},
+    results = lambda_handler(event={'resource_id': 'ami-c804d7a8',
+                                    'tags': {'scan_status': 'pass'}},
                              context="")
+    #results = lambda_handler(event={'resource_id': 'i-0a5a7ac125821543e',
+    #                                'tags': {'scan_batch': 'urn:uuid:9e62ff6e-bd69-11e6-a713-0014d16bb811'}},
+    #                         context="")
     print(results)

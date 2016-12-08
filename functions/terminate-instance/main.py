@@ -3,10 +3,11 @@
 from __future__ import print_function
 import json
 import boto3
-import botocore.exceptions
+#import botocore.exceptions
 import logging
-import dateutil.parser
-import os
+#import dateutil.parser
+#import os
+from datetime import datetime
 
 # set up logging
 logger = logging.getLogger()
@@ -19,11 +20,19 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def lambda_handler(event, context):
-    """ Main Lambda event handling loop"""
-    logger.info('Received event: ' + json.dumps(event, indent=2))
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
 
-    instance_id = event['instance_id']
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
+def lambda_handler(event, context):
+    """ Terminate an EC2 instance, identified by a passed instance id """
+    logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
+
+    instance_id = event['InstanceId']
 
     session = boto3.Session(profile_name='administrator-service')
     client = session.client('ec2')
@@ -34,12 +43,12 @@ def lambda_handler(event, context):
         ]
     )
 
-    #logger.info('Received response: ' + json.dumps(response, indent=2))
+    logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
 
     return response
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'spot_request_id': 'sir-08b93456'},
+    results = lambda_handler(event={'InstanceId': 'i-0a5a7ac125821543e'},
                              context="")
     print(results)

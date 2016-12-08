@@ -3,10 +3,11 @@
 from __future__ import print_function
 import json
 import boto3
-import botocore.exceptions
+#import botocore.exceptions
 import logging
-import dateutil.parser
-import os
+#import dateutil.parser
+from datetime import datetime
+#import os
 
 # set up logging
 logger = logging.getLogger()
@@ -19,11 +20,20 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
+
+
 def lambda_handler(event, context):
     """ Check if a given AWS Inspector Assessment Run is complete
     Return Pending | Completed | Failed
     """
-    logger.info('Received event: ' + json.dumps(event, indent=2))
+    logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
     assessment_run_arn = event['assessment_run_arn']
 
@@ -34,7 +44,8 @@ def lambda_handler(event, context):
             assessment_run_arn,
         ]
     )
-    assessment_status = response['Status']
+    logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
+    assessment_status = response['assessmentRuns'][0]['state']
 
     switcher = {
         'CREATED': 'Pending',
@@ -50,13 +61,14 @@ def lambda_handler(event, context):
     }
 
     result = switcher.get(assessment_status, 'Failed')
-
-    # logger.info('Received response: ' + json.dumps(response, indent=2))
+    logger.info("Status is {} ({})".format(result, assessment_status))
 
     return result
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'assessment_run_arn': 'arn:aws:inspect:1234'},
-                             context="")
+    results = lambda_handler(event={
+        'assessment_run_arn':
+            'arn:aws:inspector:us-west-2:754135023419:target/0-uzVNByJq/template/0-rrk7k11d/run/0-3xKsC0qg'},
+        context="")
     print(results)
