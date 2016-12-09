@@ -1,1 +1,5 @@
 *.bak
+
+# PyCharm user-specific settings
+.idea/workspace.xml
+.idea/tasks.xml
