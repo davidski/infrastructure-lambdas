@@ -3,10 +3,10 @@
 from __future__ import print_function
 import json
 import boto3
-#import botocore.exceptions
+# import botocore.exceptions
 import logging
-#import dateutil.parser
-#import os
+# import dateutil.parser
+# import os
 from datetime import datetime
 
 # set up logging
@@ -37,8 +37,8 @@ def lambda_handler(event, context):
 
     spot_request_id = event['spot_request_id']
 
-    session = boto3.Session(profile_name='administrator-service')
-    client = session.client('ec2')
+    # session = boto3.Session(profile_name='administrator-service')
+    client = boto3.client('ec2')
     response = client.describe_spot_instance_requests(
         DryRun=False,
         SpotInstanceRequestIds=[
@@ -49,17 +49,18 @@ def lambda_handler(event, context):
     spot_request_status = response['SpotInstanceRequests'][0]['State']
     if spot_request_status != "active":
         logger.info("Status not active (%s)." % spot_request_status)
-        return
+        raise ValueError("Spot request {} not yet ready (status {}".format(spot_request_id, spot_request_status))
     logger.info("Spot request active!")
+
     instance_id = response['SpotInstanceRequests'][0]['InstanceId']
     logger.info("Using instance_id: %s" % instance_id)
-
 
     response = client.describe_instance_status(
         InstanceIds=[instance_id]
     )
     status = response['InstanceStatuses'][0]['InstanceState']['Name']
-
+    if status != 'running':
+        raise ValueError("instance {} not yet ready (status {})".format(instance_id, status))
     return {'InstanceId': instance_id, 'Status': status}
 
 

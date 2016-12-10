@@ -34,8 +34,8 @@ def lambda_handler(event, context):
 
     assessment_run_arn = event['assessment_run_arn']
 
-    session = boto3.Session(profile_name='administrator-service')
-    client = session.client('inspector')
+    # session = boto3.Session(profile_name='administrator-service')
+    client = boto3.client('inspector')
     response = client.list_findings(
         assessmentRunArns=[
             assessment_run_arn,

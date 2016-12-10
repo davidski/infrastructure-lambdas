@@ -36,8 +36,8 @@ def lambda_handler(event, context):
     resource_id = event['resource_id']
     tags = event['tags']
 
-    session = boto3.Session(profile_name='administrator-service')
-    ec2 = session.client('ec2')
+    # session = boto3.Session(profile_name='administrator-service')
+    ec2 = boto3.client('ec2')
     for key in tags:
         ec2.create_tags(
             Resources=[resource_id],

@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime
 import os
 import base64
+import time
 
 # set up logging
 logger = logging.getLogger()
@@ -54,9 +55,10 @@ def lambda_handler(event, context):
     scan_batch_key = uuid.uuid1().urn
     logger.info("Scan batch run: %s" % scan_batch_key)
 
+    # session = boto3.Session(profile_name='administrator-service')
+    client = boto3.client('ec2')
+
     try:
-        session = boto3.Session(profile_name='administrator-service')
-        client = session.client('ec2')
         response = client.request_spot_instances(
             DryRun=False,
             InstanceCount=1,
@@ -82,9 +84,13 @@ def lambda_handler(event, context):
         logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
     except botocore.exceptions.ClientError as e:
         logger.fatal("Unexpected error: %s" % e)
+        raise
+    else:
+        spot_request_id=response['SpotInstanceRequests'][0]['SpotInstanceRequestId']
 
+    # sleep briefly to allow the spot request to be available
+    time.sleep(0.05)
 
-    spot_request_id=response['SpotInstanceRequests'][0]['SpotInstanceRequestId']
     # create tags on the spot fleet request to be passed to the instance
     client.create_tags(
         Resources=[spot_request_id],
@@ -105,6 +111,6 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'imageId': 'ami-c804d7a8'},
+    results = lambda_handler(event={'image_id': 'ami-c804d7a8'},
                              context="")
     print(results)

@@ -34,8 +34,8 @@ def lambda_handler(event, context):
 
     instance_id = event['InstanceId']
 
-    session = boto3.Session(profile_name='administrator-service')
-    client = session.client('ec2')
+    # session = boto3.Session(profile_name='administrator-service')
+    client = boto3.client('ec2')
     response = client.terminate_instances(
         DryRun=False,
         InstanceIds=[

@@ -25,8 +25,8 @@ def lambda_handler(event, context):
     """ Main Lambda event handling loop"""
     logger.info('Received event: ' + json.dumps(event, indent=2))
 
-    session = boto3.Session(profile_name='administrator-service')
-    sf = session.resource('stepfunctions')
+    #session = boto3.Session(profile_name='administrator-service')
+    sf = boto3.resource('stepfunctions')
     response = sf.start_execution(stateMachineArn=sf_arn, input=event)
     logger.info('Received response: ' + json.dumps(response, indent=2))
 

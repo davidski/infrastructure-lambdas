@@ -40,8 +40,8 @@ def lambda_handler(event, context):
 
     scan_uuid = event['tags']['scan_batch']
 
-    session = boto3.Session(profile_name='administrator-service')
-    client = session.client('inspector')
+    # session = boto3.Session(profile_name='administrator-service')
+    client = boto3.client('inspector')
 
     # first, create resource group
     response = client.create_resource_group(
