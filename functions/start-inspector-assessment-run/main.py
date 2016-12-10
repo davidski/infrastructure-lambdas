@@ -3,11 +3,11 @@
 from __future__ import print_function
 import json
 import boto3
-import botocore.exceptions
+#import botocore.exceptions
 import logging
-import dateutil.parser
+#import dateutil.parser
 from datetime import datetime
-import os
+#import os
 
 # set up logging
 logger = logging.getLogger()
