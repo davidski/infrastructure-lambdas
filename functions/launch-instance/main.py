@@ -38,7 +38,7 @@ def lambda_handler(event, context):
     image_id = event['imageId']
     instance_profile = os.getenv('instance_profile', 'arn:aws:iam::754135023419:instance-profile/aws-packer-ec2')
     subnet_id = os.getenv('subnet_id', 'subnet-75bc4d12')
-    security_group = os.getenv('security_group', 'sg-2a999d53'])
+    security_group = os.getenv('security_group', 'sg-2a999d53')
     instance_type = os.getenv('instance_type', 'c3.large')
 
 
