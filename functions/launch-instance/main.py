@@ -35,7 +35,7 @@ def lambda_handler(event, context):
     logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
     # fetch parameters
-    image_id = event['imageId']
+    image_id = event['image_id']
     instance_profile = os.getenv('instance_profile', 'arn:aws:iam::754135023419:instance-profile/aws-packer-ec2')
     subnet_id = os.getenv('subnet_id', 'subnet-75bc4d12')
     security_group = os.getenv('security_group', 'sg-2a999d53')
