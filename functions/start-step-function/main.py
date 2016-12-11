@@ -7,6 +7,8 @@ import boto3
 import logging
 # import dateutil.parser
 import os
+import uuid
+
 
 # set up logging
 logger = logging.getLogger()
@@ -27,6 +29,12 @@ def lambda_handler(event, context):
 
     #session = boto3.Session(profile_name='administrator-service')
     sf = boto3.resource('stepfunctions')
+
+    # generate a UUID for this scan batch, used to identify the instances to associate with this assessment
+    scan_batch_id = uuid.uuid1().urn
+    logger.info("Scan batch run: %s" % scan_batch_id)
+    event['scan_batch_id'] = scan_batch_id
+
     response = sf.start_execution(stateMachineArn=sf_arn, input=event)
     logger.info('Received response: ' + json.dumps(response, indent=2))
 

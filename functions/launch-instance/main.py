@@ -5,7 +5,6 @@ import json
 import boto3
 import botocore.exceptions
 import logging
-import uuid
 from datetime import datetime
 import os
 import base64
@@ -45,15 +44,11 @@ def lambda_handler(event, context):
 
     # set user data to install Inspector agent
     user_data = b"""#!/bin/bash
-    cd /tmp
-    curl -O https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install
-    bash install
+cd /tmp
+curl -O https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install
+bash install
     """
     user_data = base64.b64encode(user_data).decode('ascii')
-
-    # generate a UUID for this scan batch, used to identify the instances to associate with this assessment
-    scan_batch_key = uuid.uuid1().urn
-    logger.info("Scan batch run: %s" % scan_batch_key)
 
     # session = boto3.Session(profile_name='administrator-service')
     client = boto3.client('ec2')
@@ -102,12 +97,11 @@ def lambda_handler(event, context):
             'Value': 'lambda_function'
         }, {
             'Key': 'scan_batch',
-            'Value': scan_batch_key
+            'Value': event['scan_batch_id']
         }]
     )
 
-    return {
-        'spot_request_id': spot_request_id, 'scan_batch_key': scan_batch_key}
+    return spot_request_id
 
 
 if __name__ == '__main__':
