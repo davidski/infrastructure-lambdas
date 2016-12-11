@@ -32,7 +32,7 @@ def lambda_handler(event, context):
     """ Terminate an EC2 instance, identified by a passed instance id """
     logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
-    instance_id = event['InstanceId']
+    instance_id = event['instanceId']
 
     # session = boto3.Session(profile_name='administrator-service')
     client = boto3.client('ec2')
@@ -49,6 +49,6 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'InstanceId': 'i-0a5a7ac125821543e'},
+    results = lambda_handler(event={'instanceId': 'i-0a5a7ac125821543e'},
                              context="")
     print(results)
