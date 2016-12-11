@@ -36,6 +36,7 @@ def lambda_handler(event, context):
 
     # fetch parameters
     image_id = event['image_id']
+    key_name = os.getenv('key_name', 'davidski_root')
     instance_profile = os.getenv('instance_profile', 'arn:aws:iam::754135023419:instance-profile/aws-packer-ec2')
     subnet_id = os.getenv('subnet_id', 'subnet-75bc4d12')
     security_group = os.getenv('security_group', 'sg-2a999d53')
@@ -61,6 +62,7 @@ bash install
             SpotPrice='0.10',
             LaunchSpecification={
                 'ImageId': image_id,
+                'KeyName': key_name,
                 'SecurityGroupIds': [security_group],
                 'UserData': user_data,
                 'InstanceType': instance_type,
