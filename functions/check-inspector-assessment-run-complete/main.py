@@ -63,6 +63,9 @@ def lambda_handler(event, context):
     result = switcher.get(assessment_status, 'Failed')
     logger.info("Status is {} ({})".format(result, assessment_status))
 
+    if result != 'Completed':
+        raise ValueError("Assessment is not complete. Current state ({} - {})".format(assessment_status, result))
+
     return result
 
 
