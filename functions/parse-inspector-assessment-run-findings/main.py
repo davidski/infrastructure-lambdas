@@ -50,9 +50,13 @@ def lambda_handler(event, context):
     logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
 
     if len(response) > 0:
-        return {'scan_result': [{'scan_status': 'fail'}], 'failed_finding_arns': response['findingArns']}
+        return {
+            'scan_status': 'fail',
+            'failed_finding_arns': response['findingArns']
+        }
     else:
-        return {'scan_result': [{'scan_status': 'pass'}]}
+        return {'scan_status': 'pass'}
+
 
 
 if __name__ == '__main__':
