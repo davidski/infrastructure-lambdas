@@ -80,8 +80,8 @@ def lambda_handler(event, context):
     assessment_run_arn = response['assessmentRunArn']
 
     # clean up our target and resource group
-    client.delete_assessment_target(assessmentTargetArn=assessment_target_arn)
-    #client.delete_assessment_target(assessmentTargetArn=assessment_target_arn)
+    # Can't do this at the moment as deleting the target will delete the template and assessment as well
+    # client.delete_assessment_target(assessmentTargetArn=assessment_target_arn)
 
     return assessment_run_arn
 
