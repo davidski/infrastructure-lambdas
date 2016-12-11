@@ -61,7 +61,7 @@ def lambda_handler(event, context):
     status = response['InstanceStatuses'][0]['InstanceState']['Name']
     if status != 'running':
         raise ValueError("instance {} not yet ready (status {})".format(instance_id, status))
-    return {'InstanceId': instance_id, 'Status': status}
+    return {'instanceId': instance_id, 'status': status}
 
 
 if __name__ == '__main__':
