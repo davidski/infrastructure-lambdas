@@ -44,11 +44,13 @@ def lambda_handler(event, context):
 
 
     # set user data to install Inspector agent
-    user_data = b"""#!/bin/bash
-cd /tmp
-curl -O https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install
-bash install
-    """
+    user_data = (b"#!/bin/bash\n"
+                 b"apt-get update\n"
+                 b"apt-get install -y libcurl4-openssl-dev\n"
+                 b"cd /tmp\n"
+                 b"curl -O https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install\n"
+                 b"bash install\n"
+                 b"")
     user_data = base64.b64encode(user_data).decode('ascii')
 
     # session = boto3.Session(profile_name='administrator-service')
