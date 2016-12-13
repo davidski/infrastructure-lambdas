@@ -3,3 +3,6 @@
 # PyCharm user-specific settings
 .idea/workspace.xml
 .idea/tasks.xml
+
+# artifacts location
+build/*
