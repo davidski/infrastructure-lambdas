@@ -35,7 +35,7 @@ def lambda_handler(event, context):
     logger.info("Scan batch run: %s" % scan_batch_id)
     event['scan_batch_id'] = scan_batch_id
 
-    response = sf.start_execution(stateMachineArn=sf_arn, input=event)
+    response = sf.start_execution(stateMachineArn=sf_arn, input=json.dumps(event, indent=2))
     logger.info('Received response: ' + json.dumps(response, indent=2))
 
     execution_arn = response['executionArn']
