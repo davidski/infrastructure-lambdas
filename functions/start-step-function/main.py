@@ -28,7 +28,7 @@ def lambda_handler(event, context):
     logger.info('Received event: ' + json.dumps(event, indent=2))
 
     #session = boto3.Session(profile_name='administrator-service')
-    sf = boto3.resource('stepfunctions')
+    sf = boto3.client('stepfunctions')
 
     # generate a UUID for this scan batch, used to identify the instances to associate with this assessment
     scan_batch_id = uuid.uuid1().urn
