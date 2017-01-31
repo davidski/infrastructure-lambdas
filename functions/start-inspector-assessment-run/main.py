@@ -3,11 +3,9 @@
 from __future__ import print_function
 import json
 import boto3
-#import botocore.exceptions
 import logging
-#import dateutil.parser
 from datetime import datetime
-#import os
+import time
 
 # set up logging
 logger = logging.getLogger()
@@ -25,13 +23,14 @@ rules_arns = {"arn:aws:inspector:us-west-2:758058086616:rulespackage/0-9hgA516p"
               "arn:aws:inspector:us-west-2:758058086616:rulespackage/0-JJOtZiqQ": "AWS Security Best Practices"
               }
 
+
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, datetime):
         serial = obj.isoformat()
         return serial
-    raise TypeError ("Type not serializable")
+    raise TypeError("Type not serializable")
 
 
 def lambda_handler(event, context):
@@ -45,7 +44,7 @@ def lambda_handler(event, context):
 
     # first, create resource group
     response = client.create_resource_group(
-        resourceGroupTags = [
+        resourceGroupTags=[
             {
                 'key': 'scan_batch',
                 'value': scan_uuid
@@ -71,6 +70,9 @@ def lambda_handler(event, context):
     )
     logger.info('Received response: ' + json.dumps(response, default=json_serial, indent=2))
     assessment_run_template_arn = response['assessmentTemplateArn']
+
+    # pause to ensure template and resource groups have propagated
+    time.sleep(60)
 
     response = client.start_assessment_run(
         assessmentTemplateArn=assessment_run_template_arn,
