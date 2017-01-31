@@ -5,9 +5,6 @@ install: pip install -U boto3
 script: make manual
 deploy:
   provider: s3
-  edge:
-    source: davidski/dpl
-    branch: s3-sse
   on:
     all_branches: true
   access_key_id:
