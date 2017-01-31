@@ -8,7 +8,7 @@ import logging
 # import dateutil.parser
 import os
 import uuid
-
+from datetime import datetime
 
 # set up logging
 logger = logging.getLogger()
@@ -21,6 +21,15 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 sf_arn = os.getenv('stepfunction_arn', None)
+
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
 
 
 def lambda_handler(event, context):
@@ -36,7 +45,7 @@ def lambda_handler(event, context):
     event['scan_batch_id'] = scan_batch_id
 
     response = sf.start_execution(stateMachineArn=sf_arn, input=json.dumps(event, indent=2))
-    logger.info('Received response: ' + json.dumps(response, indent=2))
+    logger.info('Received response: ' + json.dumps(response, indent=2, default=json_serial))
 
     execution_arn = response['executionArn']
 
