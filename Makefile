@@ -17,6 +17,7 @@ ${BUILD_DIR}:
 
 manual: | ${BUILD_DIR}
 	zip -j ${BUILD_DIR}/ami-s3-cleaner.zip functions/ami-s3-cleaner/${MAIN}
+	zip -j ${BUILD_DIR}/check-ami-ready.zip functions/check-ami-ready/${MAIN}
 	zip -j ${BUILD_DIR}/check-instance-ready.zip functions/check-instance-ready/${MAIN}
 	zip -j ${BUILD_DIR}/check-inspector-assessment-run-complete.zip functions/check-inspector-assessment-run-complete/${MAIN}
 	zip -j ${BUILD_DIR}/launch-instance.zip functions/launch-instance/${MAIN}
