@@ -37,18 +37,18 @@ def lambda_handler(event, context):
     image_id = event['image_id']
 
     # session = boto3.Session(profile_name='administrator-service')
-    client = boto3.client('ec2')
-    response = client.image(image_id)
+    client = boto3.resource('ec2')
+    image_status = client.Image(image_id).state
 
-    if response != "available":
-        logger.info("Status not available(%s)." % response)
-        raise ValueError("Image ID {} not yet ready (status {}".format(image_id, response))
+    if image_status != "available":
+        logger.info("Status not available(%s)." % image_status)
+        raise ValueError("Image ID {} not yet ready (status {}".format(image_id, image_status))
     logger.info("Image available!")
 
-    return {'image_id': image_id, 'status': response}
+    return {'image_id': image_id, 'status': image_status}
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event={'image_id': 'sir-btxr8rxn'},
+    results = lambda_handler(event={'image_id': 'ami-66f44f06'},
                              context="")
     print(results)
