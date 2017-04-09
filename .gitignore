@@ -6,3 +6,5 @@
 
 # artifacts location
 build/*
+
+__pycache__
