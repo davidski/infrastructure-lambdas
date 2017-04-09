@@ -56,11 +56,13 @@ def lambda_handler(event, context):
     """ Parse a SNS message and relay it on to pusher.com """
     logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
-    logger.info('Got %s via %s, timestamped %s with %s characters.' % (event['Type'], event['TopicArn'],
-                                                                       event['Timestamp'], event['Message'].__len__()))
-
     msg = event['Records'][0]['Sns']
-    msg['text'] = event['Message']
+
+    logger.info('Got %s via %s, timestamped %s with %s characters.' % (msg['Type'], msg['TopicArn'],
+                                                                       msg['Timestamp'], msg['Message'].__len__()))
+
+
+    msg['text'] = msg['Message']
 
     if 'incident' in msg:
         opts = handlers.incident(msg)
@@ -74,12 +76,12 @@ def lambda_handler(event, context):
         opts = handlers.plaintext(msg)
     else:
         opts = {
-            'message': 'Unrecognized SNS message: `' + event.Message + '`'
+            'message': 'Unrecognized SNS message: `' + msg.Message + '`'
         }
 
     if 'name' not in opts and 'rich' not in opts:
         if 'Subject' in event:
-            opts['title'] = event['Subject']
+            opts['title'] = msg['Subject']
         else:
             opts['title'] = 'AWS SNS Bridge'
 
