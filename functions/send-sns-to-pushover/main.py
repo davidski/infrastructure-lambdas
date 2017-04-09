@@ -61,7 +61,7 @@ def lambda_handler(event, context):
     logger.info('Got %s via %s, timestamped %s with %s characters.' % (event['Type'], event['TopicArn'],
                                                                        event['Timestamp'], event['Message'].__len__()))
 
-    msg = event
+    msg = event['Records'][0]['Sns']
     msg['text'] = event['Message']
 
     if 'incident' in msg:
