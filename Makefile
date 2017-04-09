@@ -27,7 +27,7 @@ manual: | ${BUILD_DIR}
 	zip -j ${BUILD_DIR}/start-step-function.zip functions/start-step-function/${MAIN}
 	zip -j ${BUILD_DIR}/tag-ec2-resource.zip functions/tag-ec2-resource/${MAIN}
 	zip -j ${BUILD_DIR}/terminate-instance.zip functions/terminate-instance/${MAIN}
-	zip -j ${BUILD_DIR}/send-sns-to-pushover.zip functions/send-sns-to-pushover/${MAIN}
+	zip -j ${BUILD_DIR}/send-sns-to-pushover.zip functions/send-sns-to-pushover/*.py
 
 clean:
 	rm $(ZIPS)
