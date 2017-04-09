@@ -49,7 +49,8 @@ def pushover_handler(message):
                      "priority": message['priority'],
                      "title": message['title']
                  }), {"Content-type": "application/x-www-form-urlencoded"})
-    return conn.getresponse()
+    response = conn.getresponse()
+    return response.status
 
 
 def lambda_handler(event, context):
@@ -95,11 +96,11 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event=json.dumps({'Records': [
+    lambda_handler(event=json.dumps({'Records': [
         {'Message': 'Test message body',
          'Type': 'Notification',
          'TopicArn': 'Console',
          'Subject': 'Test message',
          'Timestamp': datetime.now().isoformat()}]}),
         context="")
-    print(results)
+
