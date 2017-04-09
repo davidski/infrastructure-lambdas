@@ -95,10 +95,11 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    results = lambda_handler(event=json.dumps({'Message': 'Test message body',
-                                               'Type': 'Notification',
-                                               'TopicArn': 'Console',
-                                               'Subject': 'Test message',
-                                               'Timestamp': datetime.now().isoformat()}),
-                             context="")
+    results = lambda_handler(event=json.dumps({'Records': [
+        {'Message': 'Test message body',
+         'Type': 'Notification',
+         'TopicArn': 'Console',
+         'Subject': 'Test message',
+         'Timestamp': datetime.now().isoformat()}]}),
+        context="")
     print(results)
