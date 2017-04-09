@@ -56,8 +56,6 @@ def lambda_handler(event, context):
     """ Parse a SNS message and relay it on to pusher.com """
     logger.info('Received event: ' + json.dumps(event, default=json_serial, indent=2))
 
-    event = json.loads(event)  # object_hook=json_serial)
-
     logger.info('Got %s via %s, timestamped %s with %s characters.' % (event['Type'], event['TopicArn'],
                                                                        event['Timestamp'], event['Message'].__len__()))
 
