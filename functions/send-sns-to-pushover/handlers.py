@@ -6,14 +6,8 @@ from __future__ import print_function
 import logging
 
 # set up logging
-logger = logging.getLogger()
+logger = logging.getLogger('SNS-Pushover Bridge')
 logger.setLevel(logging.INFO)
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
 
 
 def incident(msg):

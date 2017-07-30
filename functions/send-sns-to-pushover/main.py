@@ -1,20 +1,15 @@
 #!/bin/env python
 
-from __future__ import print_function
 import json
 import logging
 from datetime import datetime
 import handlers
 import os
-try:
-    from http.client import HTTPSConnection
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-    from httplib import HTTPSConnection
+from http.client import HTTPSConnection
+from urllib.parse import urlencode
 
 # set up logging
-logger = logging.getLogger()
+logger = logging.getLogger('SNS-Pushover Bridge')
 logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
@@ -62,7 +57,6 @@ def lambda_handler(event, context):
     logger.info('Got %s via %s, timestamped %s with %s characters.' % (msg['Type'], msg['TopicArn'],
                                                                        msg['Timestamp'], msg['Message'].__len__()))
 
-
     msg['text'] = msg['Message']
 
     if 'incident' in msg:
@@ -81,7 +75,7 @@ def lambda_handler(event, context):
         }
 
     if 'name' not in opts and 'rich' not in opts:
-        if 'Subject' in event:
+        if 'Subject' in msg:
             opts['title'] = msg['Subject']
         else:
             opts['title'] = 'AWS SNS Bridge'
@@ -96,11 +90,12 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    lambda_handler(event=json.dumps({'Records': [
-        {'Message': 'Test message body',
-         'Type': 'Notification',
-         'TopicArn': 'Console',
-         'Subject': 'Test message',
-         'Timestamp': datetime.now().isoformat()}]}),
-        context="")
-
+    lambda_handler(event={'Records': [
+            {'Sns': {
+                'Message': 'Test message body',
+                'Type': 'Notification',
+                'TopicArn': 'Console',
+                'Subject': 'Test message',
+                'Timestamp': datetime.now().isoformat()
+            }}
+        ]}, context="")
